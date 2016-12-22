@@ -1,9 +1,9 @@
-var autoprefixer = require('autoprefixer');
+let autoprefixer = require('autoprefixer');
 
 exports.setPostCSS = function() {
-    return {
-        postcss: function () {
-            return [autoprefixer]
-        }
-    }
+  return {
+    postcss: function() {
+      return [autoprefixer];
+    },
+  };
 };

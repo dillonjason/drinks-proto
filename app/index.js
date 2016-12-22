@@ -1,1 +1,2 @@
-import Routing from './routing'
+// eslint-disable-next-line
+import Routing from './routing';

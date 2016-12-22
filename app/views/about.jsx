@@ -1,11 +1,11 @@
 class About extends React.Component {
-    render() {
-        return(
+  render() {
+    return(
             <div>
                 This is just a boiler.
             </div>
-        )
-    }
+    );
+  }
 }
 
 export default About;

@@ -18,52 +18,50 @@ const purifyCSS = require('./libs/webpack.purifycss');
 const providePlugin = require('./libs/webpack.provideplugin');
 const postCSS = require('./libs/webpack.postcss');
 
-const webpack = require('webpack');
-
 const TARGET = process.env.npm_lifecycle_event;
 
 const PATHS = {
-    app: path.resolve(__dirname, 'app'),
-    style: [
-        path.resolve(__dirname, 'app/main.scss'),
-        path.resolve(__dirname, 'node_modules/purecss')
-    ],
-    build: path.resolve(__dirname, 'build')
+  app: path.resolve(__dirname, 'app'),
+  style: [
+    path.resolve(__dirname, 'app/main.scss'),
+    path.resolve(__dirname, 'node_modules/purecss'),
+  ],
+  build: path.resolve(__dirname, 'build'),
 };
 
 process.env.BABEL_ENV = TARGET;
 
 const common = {
-    entry: {
-        app: PATHS.app,
-        style: PATHS.style
+  entry: {
+    app: PATHS.app,
+    style: PATHS.style,
+  },
+  output: {
+    path: PATHS.build,
+    filename: '[name].js',
+  },
+  plugins: [
+    new HtmlWebpackPlugin({
+      title: 'index',
+      template: 'app/index-template.ejs',
+    }),
+  ],
+  resolve: {
+    alias: {
+      'react': path.join(__dirname, 'node_modules', 'react'),
+      'view': path.join(__dirname, 'app/libs', 'view'),
     },
-    output: {
-        path: PATHS.build,
-        filename: "[name].js"
-    },
-    plugins: [
-        new HtmlWebpackPlugin({
-            title: 'index',
-            template: 'app/index-template.ejs'
-        })
-    ],
-    resolve: {
-        alias: {
-            'react': path.join(__dirname, 'node_modules', 'react'),
-            'view': path.join(__dirname, 'app/libs', 'view')
-        },
-        extensions: ['', '.js', '.jsx', '.css', '.scss']
-    }
+    extensions: ['', '.js', '.jsx', '.css', '.scss'],
+  },
 };
 
-var config;
+let config;
 
 switch(TARGET) {
-    case 'build':
-    case 'postinstall':
-    case 'stats':
-        config = merge(common,
+case 'build':
+case 'postinstall':
+case 'stats':
+  config = merge(common,
             loaders.es6Loader(PATHS.app),
             loaders.styleExtracts(PATHS.style),
             purifyCSS.purify([PATHS.app]),
@@ -71,30 +69,30 @@ switch(TARGET) {
             definePlugin.setFreeVariable('process.env.NODE_ENV', 'production'),
             cleanWebpackPlugin.cleanWebpack(PATHS.build),
             providePlugin.setProvides({
-                React: 'react'
+              React: 'react',
             }),
             commonsChunkPlugin.extractBundle({
-                name: 'vendor',
-                entries: Object.keys(pkg.dependencies)
+              name: 'vendor',
+              entries: Object.keys(pkg.dependencies),
             }),
             postCSS.setPostCSS(),
             prodConfig.prodServer({PATHS})
         );
-        break;
-    default:
-        config = merge(common,
+  break;
+default:
+  config = merge(common,
             loaders.es6Loader(PATHS.app),
             loaders.styleLoaders(PATHS.style),
             providePlugin.setProvides({
-                React: 'react'
+              React: 'react',
             }),
             devConfig.devServer({
-                host: process.env.HOST,
-                port: process.env.PORT
+              host: process.env.HOST,
+              port: process.env.PORT,
             })
         );
 }
 
 module.exports = validate(config, {
-    quiet: true
+  quiet: true,
 });
